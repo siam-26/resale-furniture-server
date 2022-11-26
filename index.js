@@ -22,7 +22,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const home_category = client.db("HMAS-Furniture").collection("Home-category");
+
         const users_collection = client.db("HMAS-Furniture").collection("users_collection");
+
+        const usersBooking_collection = client.db("HMAS-Furniture").collection("usersBooking_collection");
 
         //home categories
         app.get('/categories', async (req, res) => {
@@ -46,6 +49,12 @@ async function run() {
             res.send(user);
         })
 
+        //user booking api
+        app.post('/userBooking', async (req, res) => {
+            const query = req.body;
+            const userBooking = await usersBooking_collection.insertOne(query);
+            res.send(userBooking);
+        })
         //get jwt token api
 
         app.get('/jwt', async (req, res) => {
