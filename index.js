@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -21,6 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const home_category = client.db("HMAS-Furniture").collection("Home-category");
+        const users_collection = client.db("HMAS-Furniture").collection("users_collection");
 
         //home categories
         app.get('/categories', async (req, res) => {
@@ -28,6 +29,23 @@ async function run() {
             const result = await home_category.find(query).toArray();
             res.send(result);
         })
+
+        //get specific datas from categories
+        app.get('/categories/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const categories = await home_category.findOne(query);
+            res.send(categories);
+        })
+
+        //new create user api to save on database
+        app.post('/users', async (req, res) => {
+            const query = req.body;
+            const user = await users_collection.insertOne(query);
+            res.send(user);
+        })
+
+
     }
 
     finally {
