@@ -84,6 +84,14 @@ async function run() {
             const user = await users_collection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
         })
+
+        //get admin's api from database
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await users_collection.findOne(query);
+            res.send({ isAdmin: user?.email === 'admin' });
+        })
     }
 
     finally {
