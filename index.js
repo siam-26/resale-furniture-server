@@ -25,6 +25,8 @@ async function run() {
 
         const users_collection = client.db("HMAS-Furniture").collection("users_collection");
 
+        const sellers_collection = client.db("HMAS-Furniture").collection("sellers_collection");
+
         const usersBooking_collection = client.db("HMAS-Furniture").collection("usersBooking_collection");
 
         //home categories
@@ -43,6 +45,13 @@ async function run() {
         })
 
         //new create user api to save on database
+        app.post('/users', async (req, res) => {
+            const query = req.body;
+            const user = await users_collection.insertOne(query);
+            res.send(user);
+        })
+
+        //new create seller-user api to save on database
         app.post('/users', async (req, res) => {
             const query = req.body;
             const user = await users_collection.insertOne(query);
