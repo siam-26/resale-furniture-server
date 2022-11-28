@@ -25,6 +25,8 @@ async function run() {
 
         const users_collection = client.db("HMAS-Furniture").collection("users_collection");
 
+        const addProduct_collection = client.db("HMAS-Furniture").collection("addProduct_collection");
+
         // const sellers_collection = client.db("HMAS-Furniture").collection("sellers_collection");
 
         const usersBooking_collection = client.db("HMAS-Furniture").collection("usersBooking_collection");
@@ -90,7 +92,23 @@ async function run() {
             const email = req.params.email;
             const query = { email };
             const user = await users_collection.findOne(query);
-            res.send({ isAdmin: user?.email === 'admin' });
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
+        //get user's api from database
+        app.get('/users/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await users_collection.findOne(query);
+            res.send({ isUser: user?.role === 'user' });
+
+        })
+
+        //add product
+        app.post('/addProducts', async (req, res) => {
+            const seller = req.body;
+            const result = await addProduct_collection.insertOne(seller);
+            res.send(result);
         })
     }
 
