@@ -139,7 +139,15 @@ async function run() {
         app.get('/dashboard/admin/allBuyers', async (req, res) => {
             const query = {};
             const buyers = await users_collection.find(query).toArray();
-            const result = buyers.filter(buyer => (!buyer.role));
+            const result = buyers.filter(buyer => (!buyer?.role));
+            res.send(result);
+        })
+
+        //Admin AllSellers apiData
+        app.get('/dashboard/admin/allSellers', async (req, res) => {
+            const query = {};
+            const sellers = await users_collection.find(query).toArray();
+            const result = sellers.filter(seller => (seller?.role === 'seller'));
             res.send(result);
         })
     }
