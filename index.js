@@ -117,6 +117,14 @@ async function run() {
             const result = await addProduct_collection.find(query).toArray();
             res.send(result);
         })
+
+        //delete api for myProducts
+        app.delete('/dashboard/myProducts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await addProduct_collection.deleteOne(query);
+            res.send(result);
+        })
     }
 
     finally {
