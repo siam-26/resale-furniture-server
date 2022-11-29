@@ -100,8 +100,9 @@ async function run() {
             const email = req.params.email;
             const query = { email };
             const user = await users_collection.findOne(query);
-            res.send({ isUser: user?.role === 'user' });
-
+            // res.send({ isUser: user?.role === 'user' });
+            // res.send({ isUser: user?.filter(usr => (!usr.role)) });
+            res.send({ isUser: (!user?.role) });
         })
 
         //add product
@@ -123,6 +124,22 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await addProduct_collection.deleteOne(query);
+            res.send(result);
+        })
+
+        //delete api for a buyer
+        app.delete('/dashboard/admin/allBuyers/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await users_collection.deleteOne(query);
+            res.send(result);
+        })
+
+        //Admin AllBuyers apiData
+        app.get('/dashboard/admin/allBuyers', async (req, res) => {
+            const query = {};
+            const buyers = await users_collection.find(query).toArray();
+            const result = buyers.filter(buyer => (!buyer.role));
             res.send(result);
         })
     }
