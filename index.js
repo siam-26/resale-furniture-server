@@ -114,10 +114,17 @@ async function run() {
             res.send(result);
         })
 
-        //advertised products
+        //save advertised products
         app.post('/myProducts/advertise', async (req, res) => {
             const body = req.body;
             const result = await advertise_collection.insertOne(body);
+            res.send(result);
+        })
+
+        //get advertised products
+        app.get('/myProducts/advertise', async (req, res) => {
+            const query = {};
+            const result = await advertise_collection.find(query).toArray();
             res.send(result);
         })
 
@@ -166,6 +173,20 @@ async function run() {
             const query = {};
             const sellers = await users_collection.find(query).toArray();
             const result = sellers.filter(seller => (seller?.role === 'seller'));
+            res.send(result);
+        })
+
+        //Admin seller verified status update
+        app.put('/dashboard/admin/allSellers/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: 'verified'
+                }
+            }
+            const result = await users_collection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
     }
