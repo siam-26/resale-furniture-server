@@ -21,6 +21,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try {
+
+        //MONGODB COLLECTIONS
         const home_category = client.db("HMAS-Furniture").collection("Home-category");
 
         const users_collection = client.db("HMAS-Furniture").collection("users_collection");
@@ -30,6 +32,8 @@ async function run() {
         // const sellers_collection = client.db("HMAS-Furniture").collection("sellers_collection");
 
         const usersBooking_collection = client.db("HMAS-Furniture").collection("usersBooking_collection");
+
+        const advertise_collection = client.db("HMAS-Furniture").collection("advertise_collection");
 
         //home categories
         app.get('/categories', async (req, res) => {
@@ -100,8 +104,6 @@ async function run() {
             const email = req.params.email;
             const query = { email };
             const user = await users_collection.findOne(query);
-            // res.send({ isUser: user?.role === 'user' });
-            // res.send({ isUser: user?.filter(usr => (!usr.role)) });
             res.send({ isUser: (!user?.role) });
         })
 
@@ -112,11 +114,19 @@ async function run() {
             res.send(result);
         })
 
-        //get My products
-        app.get('/dashboard/myProducts', async (req, res) => {
-            const query = {};
-            const result = await addProduct_collection.find(query).toArray();
+        //advertised products
+        app.post('/myProducts/advertise', async (req, res) => {
+            const body = req.body;
+            const result = await advertise_collection.insertOne(body);
             res.send(result);
+        })
+
+        //get MyProducts
+        app.get('/dashboard/myProducts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const myProducts = await addProduct_collection.find(query).toArray();
+            res.send(myProducts);
         })
 
         //delete api for myProducts
@@ -129,6 +139,14 @@ async function run() {
 
         //delete api for a buyer
         app.delete('/dashboard/admin/allBuyers/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await users_collection.deleteOne(query);
+            res.send(result);
+        })
+
+        //delete api for a seller
+        app.delete('/dashboard/admin/allSellers/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await users_collection.deleteOne(query);
